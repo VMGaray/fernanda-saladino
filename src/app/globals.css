@@ -1,0 +1,36 @@
+/* globals.css */
+@import "tailwindcss";
+
+:root {
+  background-color: #121212;
+  color: #F5F5F7;
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+body {
+  background-color: #121212;
+  color: #F5F5F7;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+input,
+textarea,
+select {
+  border: none;
+  border-bottom: 1px solid #C0C0C0;
+  background: transparent;
+  outline: none;
+  color: #F5F5F7;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-bottom-color: #D4AF37;
+}

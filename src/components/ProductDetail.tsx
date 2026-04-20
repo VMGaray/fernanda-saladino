@@ -68,7 +68,14 @@ export default function ProductDetail({ params }: PageProps) {
       .neq("id", product!.id)
       .limit(4);
 
-    setRelated((data ?? []) as RelatedProduct[]);
+    setRelated((data ?? []).map(p => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      image_url: p.image_url,
+      slug: p.slug,
+      category: p.category,
+    })));
   }
 
   fetchRelated();
@@ -77,7 +84,7 @@ export default function ProductDetail({ params }: PageProps) {
   const handleAddToCart = () => {
     if (!product) return;
     addToCart({
-      id: String(product.id),
+      id: product.id,
       name: product.name,
       price: product.price,
       image_url: product.image_url,

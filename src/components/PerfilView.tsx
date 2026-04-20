@@ -225,3 +225,5 @@ export default function PerfilView() {
     </main>
   );
 }
+
+// Fix para forzar el deploy sin catch

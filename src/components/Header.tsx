@@ -345,13 +345,9 @@ export default function Header() {
 
           {/* Header del drawer */}
           <div className="flex items-center justify-between px-5 py-4 flex-shrink-0" style={{ borderBottom: "1px solid rgba(245,245,247,0.06)" }}>
-            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex flex-col items-start gap-0 no-underline">
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="no-underline">
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 600, color: "#F5F5F7", lineHeight: 1, letterSpacing: "0.04em" }}>
                 FS
-              </span>
-              <div style={{ height: "1px", background: "rgba(245,245,247,0.2)", margin: "3px 0", width: "44px" }} />
-              <span style={{ fontSize: "7.5px", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(245,245,247,0.7)", fontWeight: 300 }}>
-                Fernanda Saladino
               </span>
             </Link>
             <button

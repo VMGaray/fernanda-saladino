@@ -226,4 +226,4 @@ export default function PerfilView() {
   );
 }
 
-// Fix para forzar el deploy sin catch
+// Fix para forzar el deploy sin catch de errores en el servidor

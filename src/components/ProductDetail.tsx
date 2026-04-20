@@ -129,7 +129,7 @@ export default function ProductDetail({ params }: PageProps) {
   const whatsappLink = `https://wa.me/5491151818438?text=${whatsappMessage}`;
 
   const productImages = product.images?.length ? product.images : [product.image_url];
-
+//probando
   return (
     <main className="min-h-screen bg-brand-black text-brand-light">
       <div className="container mx-auto px-6 py-12 md:py-20">

@@ -18,7 +18,7 @@ export default function Home() {
       </section>
 
       {/* SECCIÓN 3: Botón Explorar */}
-      <section className="py-32 flex justify-center bg-brand-black">
+      <section className="py-10 flex justify-center bg-brand-black">
         <Link
           href="/catalogo"
           className="group relative px-16 py-5 overflow-hidden border border-brand-accent/30 transition-all duration-700 hover:border-brand-accent"

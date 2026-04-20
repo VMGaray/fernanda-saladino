@@ -1,4 +1,19 @@
+import type { Metadata } from "next";
 import CategoryView from "../../../components/CategoryView";
+
+interface GenerateMetadataProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: GenerateMetadataProps): Promise<Metadata> {
+  const { slug } = await params;
+  const categoryName = slug.replace(/-/g, " ");
+  const title = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+  return {
+    title,
+    description: `${categoryName} artesanales en cuero argentino de primera calidad. Diseños exclusivos hechos a mano por Fernanda Saladino.`,
+  };
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;

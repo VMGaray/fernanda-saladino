@@ -38,7 +38,10 @@ export default function HeroCarousel() {
 
       {/* Contenido Fijo (Overlay) */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-6">
-        <h2 className="text-5xl md:text-8xl font-extralight tracking-[0.6em] uppercase text-white drop-shadow-2xl">
+        <h2
+          className="font-extralight uppercase text-white drop-shadow-2xl"
+          style={{ fontSize: "clamp(28px, 12vw, 120px)", letterSpacing: "clamp(0.05em, 2vw, 0.3em)" }}
+        >
           NUEVA <span className="font-light italic text-brand-accent">COLECCIÓN</span>
         </h2>
         <p className="text-brand-silver text-[10px] md:text-xs tracking-[0.8em] uppercase drop-shadow-md">

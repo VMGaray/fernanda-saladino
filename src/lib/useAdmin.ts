@@ -19,7 +19,6 @@ export function useAdmin() {
         .eq("id", session.user.id)
         .single();
 
-      console.log("useAdmin — data:", data, "error:", error);
       setIsAdmin(data?.role === "admin");
       setLoading(false);
     });

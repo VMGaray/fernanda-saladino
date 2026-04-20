@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import React from "react";
 import { supabase } from "../../lib/supabase";
 
 interface Product {
@@ -30,8 +31,13 @@ const CATEGORIES = [
 export default function ProductForm({ initialData, onSuccess, onCancel }: ProductFormProps) {
   const isEdit = !!initialData?.id;
   const [loading, setLoading] = useState(false);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [existingUrls, setExistingUrls] = useState<string[]>(
+    initialData?.images?.length ? initialData.images : initialData?.image_url ? [initialData.image_url] : []
+  );
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [newPreviews, setNewPreviews] = useState<string[]>([]);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(initialData?.name ?? "");
   const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
@@ -42,16 +48,20 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   const [slug, setSlug] = useState(initialData?.slug ?? "");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      setSelectedFiles(files);
-      setPreviews(files.map(f => URL.createObjectURL(f)));
-    }
+    const added = Array.from(e.target.files || []);
+    if (added.length === 0) return;
+    setNewFiles(prev => [...prev, ...added]);
+    setNewPreviews(prev => [...prev, ...added.map(f => URL.createObjectURL(f))]);
+    e.target.value = "";
   };
 
-  const removeImage = (index: number) => {
-    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
-    setPreviews(previews.filter((_, i) => i !== index));
+  const removeExistingImage = (index: number) => {
+    setExistingUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
+    setNewFiles(prev => prev.filter((_, i) => i !== index));
+    setNewPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,25 +69,29 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     setLoading(true);
 
     try {
-      let imageUrls: string[] = initialData?.images ?? [];
-      let imageUrl: string = initialData?.image_url ?? "";
+      const uploadedUrls: string[] = [];
 
-      if (selectedFiles.length > 0) {
-        imageUrls = [];
-        for (const file of selectedFiles) {
-          const fileExt = file.name.split(".").pop();
-          const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-          const { error: storageError } = await supabase.storage
+      if (newFiles.length > 0) {
+        setUploadingImage(true);
+        for (const file of newFiles) {
+          const fileName = `${Date.now()}-${file.name}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
             .from("product-images")
             .upload(fileName, file);
-          if (storageError) throw storageError;
+          if (uploadError) throw new Error("Error subiendo imagen: " + uploadError.message);
+          if (!uploadData) throw new Error("Error subiendo imagen: no se recibió respuesta del servidor.");
           const { data: { publicUrl } } = supabase.storage
             .from("product-images")
             .getPublicUrl(fileName);
-          imageUrls.push(publicUrl);
+          if (!publicUrl) throw new Error("Error obteniendo URL pública de la imagen.");
+          uploadedUrls.push(publicUrl);
         }
-        imageUrl = imageUrls[0];
+        setUploadingImage(false);
       }
+
+      const allImageUrls = [...existingUrls, ...uploadedUrls];
+
+      if (!isEdit && allImageUrls.length === 0) throw new Error("Seleccioná al menos una imagen.");
 
       const payload: Record<string, unknown> = {
         name,
@@ -87,23 +101,24 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
         stock: stock ? parseInt(stock) : null,
         featured,
         slug: slug || name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
-        ...(imageUrls.length > 0 && { image_url: imageUrl, images: imageUrls }),
+        ...(allImageUrls.length > 0 && { image_url: allImageUrls[0], images: allImageUrls }),
       };
 
       if (isEdit) {
-        const { error } = await supabase.from("products").update(payload).eq("id", initialData!.id!);
-        if (error) throw error;
+        const { error: dbError } = await supabase.from("products").update(payload).eq("id", initialData!.id!);
+        if (dbError) throw new Error("Error guardando producto: " + dbError.message);
       } else {
-        if (imageUrls.length === 0) throw new Error("Seleccioná al menos una imagen.");
-        const { error } = await supabase.from("products").insert([payload]);
-        if (error) throw error;
+        const { error: dbError } = await supabase.from("products").insert([payload]);
+        if (dbError) throw new Error("Error guardando producto: " + dbError.message);
       }
 
       onSuccess?.();
     } catch (err: unknown) {
+      console.error("Error al guardar producto:", err);
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
+      setUploadingImage(false);
     }
   };
 
@@ -201,37 +216,89 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
 
       {/* Imágenes */}
       <div>
-        <label style={labelStyle}>Imágenes {isEdit && "(dejar vacío para mantener las actuales)"}</label>
+        <label style={labelStyle}>Imágenes</label>
+
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           multiple
           onChange={handleImageChange}
-          required={!isEdit}
-          style={{ fontSize: "10px", color: "rgba(192,192,192,0.5)", marginTop: "4px" }}
+          style={{ display: "none" }}
         />
-        {previews.length > 0 && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginTop: "12px" }}>
-            {previews.map((src, i) => (
-              <div key={i} style={{ position: "relative" }}>
-                <img src={src} alt="" style={{ width: "100%", height: "80px", objectFit: "cover", border: "1px solid rgba(212,175,55,0.2)" }} />
+
+        {/* Grilla unificada: existentes + nuevas */}
+        {(existingUrls.length > 0 || newPreviews.length > 0) && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginTop: "8px" }}>
+            {existingUrls.map((src, i) => (
+              <div key={`existing-${i}`} style={{ position: "relative" }}>
+                <img
+                  src={src}
+                  alt=""
+                  style={{ width: "100%", height: "160px", objectFit: "cover", border: "1px solid rgba(212,175,55,0.2)", display: "block" }}
+                />
                 <button
                   type="button"
-                  onClick={() => removeImage(i)}
-                  style={{ position: "absolute", top: 2, right: 2, background: "#c0392b", border: "none", color: "#fff", width: 18, height: 18, cursor: "pointer", fontSize: "10px" }}
+                  onClick={() => removeExistingImage(i)}
+                  style={{ position: "absolute", top: 4, right: 4, background: "#c0392b", border: "none", color: "#fff", width: 20, height: 20, cursor: "pointer", fontSize: "10px" }}
                 >✕</button>
-                {i === 0 && <span style={{ position: "absolute", bottom: 2, left: 2, background: "#D4AF37", color: "#121212", fontSize: "7px", padding: "1px 5px", letterSpacing: "0.2em", textTransform: "uppercase" }}>Principal</span>}
+                {i === 0 && (
+                  <span style={{ position: "absolute", bottom: 4, left: 4, background: "#D4AF37", color: "#121212", fontSize: "7px", padding: "2px 6px", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                    Principal
+                  </span>
+                )}
+              </div>
+            ))}
+            {newPreviews.map((src, i) => (
+              <div key={`new-${i}`} style={{ position: "relative" }}>
+                <img
+                  src={src}
+                  alt=""
+                  style={{ width: "100%", height: "160px", objectFit: "cover", border: "1px solid rgba(212,175,55,0.4)", display: "block" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeNewImage(i)}
+                  style={{ position: "absolute", top: 4, right: 4, background: "#c0392b", border: "none", color: "#fff", width: 20, height: 20, cursor: "pointer", fontSize: "10px" }}
+                >✕</button>
+                {existingUrls.length === 0 && i === 0 && (
+                  <span style={{ position: "absolute", bottom: 4, left: 4, background: "#D4AF37", color: "#121212", fontSize: "7px", padding: "2px 6px", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                    Principal
+                  </span>
+                )}
+                <span style={{ position: "absolute", top: 4, left: 4, background: "rgba(0,0,0,0.6)", color: "rgba(192,192,192,0.7)", fontSize: "7px", padding: "2px 5px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                  Nueva
+                </span>
               </div>
             ))}
           </div>
         )}
+
+        {/* Drop zone */}
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          style={{
+            border: "1px dashed rgba(212,175,55,0.3)",
+            padding: "16px",
+            textAlign: "center",
+            cursor: "pointer",
+            marginTop: "8px",
+            transition: "border-color 0.2s",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(212,175,55,0.6)")}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)")}
+        >
+          <span style={{ fontSize: "9px", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(192,192,192,0.5)", fontWeight: 300 }}>
+            {existingUrls.length + newPreviews.length > 0 ? "Agregar más imágenes" : "Seleccionar imágenes"}
+          </span>
+        </div>
       </div>
 
       {/* Acciones */}
       <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploadingImage}
           style={{
             flex: 1,
             padding: "12px",
@@ -242,11 +309,11 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
             letterSpacing: "0.3em",
             textTransform: "uppercase",
             fontWeight: 300,
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.5 : 1,
+            cursor: (loading || uploadingImage) ? "not-allowed" : "pointer",
+            opacity: (loading || uploadingImage) ? 0.5 : 1,
           }}
         >
-          {loading ? "Guardando..." : isEdit ? "Guardar cambios" : "Publicar producto"}
+          {uploadingImage ? "Subiendo imagen..." : loading ? "Guardando..." : isEdit ? "Guardar cambios" : "Publicar producto"}
         </button>
         {onCancel && (
           <button

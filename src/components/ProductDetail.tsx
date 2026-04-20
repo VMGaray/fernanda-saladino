@@ -32,6 +32,7 @@ export default function ProductDetail({ params }: PageProps) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [related, setRelated] = useState<Product[]>([]);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -46,6 +47,20 @@ export default function ProductDetail({ params }: PageProps) {
     }
     fetchProduct();
   }, [slug]);
+
+  useEffect(() => {
+    if (!product) return;
+    async function fetchRelated() {
+      const { data } = await supabase
+        .from("products")
+        .select("id, name, price, image_url, slug, category")
+        .eq("category", product!.category)
+        .neq("id", product!.id)
+        .limit(4);
+      setRelated(data ?? []);
+    }
+    fetchRelated();
+  }, [product]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -72,8 +87,11 @@ export default function ProductDetail({ params }: PageProps) {
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-brand-black text-brand-light flex flex-col items-center justify-center gap-8">
-        <h2 className="text-2xl tracking-[0.3em] uppercase text-brand-silver">
+      <main className="min-h-screen bg-brand-black text-brand-light flex flex-col items-center justify-center gap-8 px-6 text-center">
+        <h2
+          className="text-2xl tracking-[0.3em] uppercase text-brand-silver"
+          style={{ wordBreak: "break-word", hyphens: "auto" }}
+        >
           Producto no encontrado
         </h2>
         <Link
@@ -280,19 +298,46 @@ export default function ProductDetail({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Productos relacionados — placeholder */}
-        <div className="mt-32" style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "80px" }}>
-          <h3
-            className="font-light uppercase text-center mb-12"
-            style={{ fontSize: "22px", letterSpacing: "0.4em" }}
-          >
-            También te puede{" "}
-            <span style={{ color: "#D4AF37" }}>interesar</span>
-          </h3>
-          <p className="text-center text-brand-silver/30 text-[10px] tracking-widest uppercase">
-            Próximamente
-          </p>
-        </div>
+        {/* Productos relacionados */}
+        {related.length > 0 && (
+          <div className="mt-32" style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "80px" }}>
+            <h3
+              className="font-light uppercase text-center mb-12"
+              style={{ fontSize: "22px", letterSpacing: "0.4em" }}
+            >
+              También te puede{" "}
+              <span style={{ color: "#D4AF37" }}>interesar</span>
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {related.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/producto/${item.slug || item.id}`}
+                  className="group cursor-pointer block"
+                >
+                  <div className="aspect-[4/5] overflow-hidden mb-3 relative bg-brand-dark border border-transparent group-hover:border-brand-accent/25 transition-all duration-500">
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="text-center space-y-1">
+                    <h4
+                      className="text-[11px] uppercase transition-colors duration-200 group-hover:text-brand-accent"
+                      style={{ letterSpacing: "0.2em" }}
+                    >
+                      {item.name}
+                    </h4>
+                    <p className="text-brand-accent text-xs tracking-widest">
+                      ${Number(item.price).toLocaleString("es-AR")}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </main>

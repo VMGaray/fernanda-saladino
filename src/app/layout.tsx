@@ -17,8 +17,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fernanda Saladino | Carteras y Accesorios en Cuero Argentino",
-  description: "Carteras, bolsos y accesorios artesanales en cuero argentino. Diseños exclusivos, hechos a mano con la mejor calidad.",
+  title: {
+    default: "Fernanda Saladino | Carteras y Accesorios en Cuero Argentino",
+    template: "%s | Fernanda Saladino",
+  },
+  description: "Carteras, bolsos y accesorios artesanales en cuero argentino de primera calidad. Diseños exclusivos hechos a mano.",
+  keywords: ["carteras de cuero", "bolsos artesanales", "cuero argentino", "accesorios de cuero", "handmade leather"],
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: "Fernanda Saladino",
+    title: "Fernanda Saladino | Carteras y Accesorios en Cuero Argentino",
+    description: "Carteras, bolsos y accesorios artesanales en cuero argentino de primera calidad.",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

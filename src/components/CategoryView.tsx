@@ -43,7 +43,7 @@ export default async function CategoryView({ slug }: CategoryViewProps) {
           </p>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
             {products.map((product) => (
               <Link
                 key={product.id}
@@ -51,7 +51,7 @@ export default async function CategoryView({ slug }: CategoryViewProps) {
                 className="group cursor-pointer block"
               >
                 {/* Imagen */}
-                <div className="aspect-[4/5] overflow-hidden mb-5 relative bg-brand-dark border border-transparent group-hover:border-brand-accent/25 transition-all duration-500">
+                <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden mb-3 md:mb-5 relative bg-brand-dark border border-transparent group-hover:border-brand-accent/25 transition-all duration-500">
                   <img
                     src={product.image_url}
                     alt={product.name}

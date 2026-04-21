@@ -74,7 +74,12 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
       if (newFiles.length > 0) {
         setUploadingImage(true);
         for (const file of newFiles) {
-          const fileName = `${Date.now()}-${file.name}`;
+          const cleanFileName = file.name
+            .normalize("NFD")
+            .replace(/[̀-ͯ]/g, "")
+            .replace(/[^a-zA-Z0-9.-]/g, "-")
+            .toLowerCase();
+          const fileName = `${Date.now()}-${cleanFileName}`;
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from("product-images")
             .upload(fileName, file);

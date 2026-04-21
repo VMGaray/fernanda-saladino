@@ -335,6 +335,25 @@ export default function Header() {
               </svg>
             </button>
 
+            {/* Cuenta mobile */}
+            {isLoggedIn ? (
+              <Link href="/perfil" style={{ color: "#D4AF37", display: "flex" }}>
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </Link>
+            ) : (
+              <button
+                onClick={() => setAuthOpen(true)}
+                className="bg-transparent border-none cursor-pointer p-0"
+                style={{ color: "rgba(245,245,247,0.5)", display: "flex" }}
+              >
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+            )}
+
             {/* Carrito mobile */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("toggleCart"))}
@@ -480,23 +499,46 @@ export default function Header() {
             {/* Separador */}
             <div style={{ height: "1px", background: "rgba(212,175,55,0.2)", margin: "24px 0" }} />
 
-            {/* Mi Cuenta */}
-            <button
-              onClick={() => { setMobileMenuOpen(false); setAuthOpen(true); }}
-              className="flex items-center w-full bg-transparent border-none cursor-pointer"
-              style={{ padding: "16px 0", color: isLoggedIn ? "#D4AF37" : "rgba(245,245,247,0.6)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", fontWeight: 300, borderBottom: "1px solid rgba(245,245,247,0.06)" }}
-            >
-              Mi Cuenta
-            </button>
-
-            {/* Favoritos */}
-            <Link
-              href="/favoritos"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ display: "block", padding: "16px 0", color: hasFavorites ? "#D4AF37" : "rgba(245,245,247,0.6)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", fontWeight: 300 }}
-            >
-              Favoritos{hasFavorites ? ` (${favorites.length})` : ""}
-            </Link>
+            {isLoggedIn ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ display: "block", padding: "12px 0", color: "#D4AF37", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", textDecoration: "none" }}
+                  >
+                    Panel Admin
+                  </Link>
+                )}
+                <Link
+                  href="/perfil"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ display: "block", padding: "12px 0", color: "rgba(245,245,247,0.7)", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", textDecoration: "none" }}
+                >
+                  Mi Perfil
+                </Link>
+                <Link
+                  href="/favoritos"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ display: "block", padding: "12px 0", color: "rgba(245,245,247,0.7)", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", textDecoration: "none" }}
+                >
+                  Favoritos
+                </Link>
+                <button
+                  onClick={async () => { await supabase.auth.signOut(); setMobileMenuOpen(false); }}
+                  style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 0", background: "none", border: "none", cursor: "pointer", color: "rgba(245,245,247,0.4)", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase" }}
+                >
+                  Cerrar Sesión
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setMobileMenuOpen(false); setAuthOpen(true); }}
+                style={{ display: "block", padding: "12px 0", background: "none", border: "none", cursor: "pointer", color: "rgba(245,245,247,0.7)", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase" }}
+              >
+                Ingresar / Registrarse
+              </button>
+            )}
 
           </nav>
         </div>

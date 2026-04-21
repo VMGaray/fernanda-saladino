@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
 interface AuthModalProps {
@@ -10,6 +11,7 @@ interface AuthModalProps {
 type View = "login" | "register";
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const router = useRouter();
   const [view, setView] = useState<View>("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,14 +42,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
       setError("Email o contraseña incorrectos.");
       return;
     }
-    onClose();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
     resetForm();
+    if (profile?.role === "admin") {
+      router.push("/admin");
+    } else {
+      onClose();
+    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {

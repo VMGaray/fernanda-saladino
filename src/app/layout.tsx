@@ -5,6 +5,7 @@ import { CartProvider } from "../context/CartContext";
 import { FavoritesProvider } from "../context/FavoritesContext";
 import Cart from "../components/Cart";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,6 +63,7 @@ export default function RootLayout({
           <FavoritesProvider>
             <Header />
             {children}
+            <Footer />
             <Cart />
           </FavoritesProvider>
         </CartProvider>

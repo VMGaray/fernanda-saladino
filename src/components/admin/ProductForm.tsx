@@ -22,10 +22,19 @@ interface ProductFormProps {
   onCancel?: () => void;
 }
 
-const CATEGORIES = [
-  "Bolsos", "Bandoleras", "Shoulder Bags", "Tote Bags", "Mini Bags",
-  "Riñoneras", "Mochilas", "De Mano", "Sobres", "Bolso de Viaje",
-  "Cinturones", "Fajas", "Yerberas", "Portadocumentos", "Porta Anteojos",
+const CATEGORY_GROUPS = [
+  {
+    group: "Productos",
+    items: ["Carteras", "Bolsos", "Bandoleras", "Tote Bags", "Riñoneras", "Mochilas", "Sobres"],
+  },
+  {
+    group: "Accesorios",
+    items: ["Cuelleras", "Cinturones", "Fajas", "Yerberas", "Porta Documentos", "Porta Anteojos"],
+  },
+  {
+    group: "Otros",
+    items: ["Ellos"],
+  },
 ];
 
 export default function ProductForm({ initialData, onSuccess, onCancel }: ProductFormProps) {
@@ -41,7 +50,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
 
   const [name, setName] = useState(initialData?.name ?? "");
   const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
-  const [category, setCategory] = useState(initialData?.category ?? CATEGORIES[0]);
+  const [category, setCategory] = useState(initialData?.category ?? CATEGORY_GROUPS[0].items[0]);
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [stock, setStock] = useState(initialData?.stock?.toString() ?? "");
   const [featured, setFeatured] = useState(initialData?.featured ?? false);
@@ -188,7 +197,11 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
             value={category}
             onChange={e => setCategory(e.target.value)}
           >
-            {CATEGORIES.map(c => <option key={c} value={c} style={{ background: "#1E1E1E" }}>{c}</option>)}
+            {CATEGORY_GROUPS.map(({ group, items }) => (
+              <optgroup key={group} label={group} style={{ background: "#1E1E1E", color: "rgba(212,175,55,0.8)" }}>
+                {items.map(c => <option key={c} value={c} style={{ background: "#1E1E1E" }}>{c}</option>)}
+              </optgroup>
+            ))}
           </select>
         </div>
         <div>

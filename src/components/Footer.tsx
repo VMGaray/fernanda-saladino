@@ -63,8 +63,9 @@ export default function Footer() {
               Tienda
             </p>
             {[
-              { label: "Carteras", href: "/catalogo" },
-              { label: "Accesorios", href: "/categoria/cinturones" },
+              { label: "Productos", href: "/catalogo" },
+              { label: "Accesorios", href: "/categoria/cuelleras" },
+              { label: "Ellos", href: "/categoria/ellos" },
               { label: "Gift Card", href: "/gift-card" },
             ].map(({ label, href }) => (
               <Link

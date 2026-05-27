@@ -8,12 +8,12 @@ import AuthModal from "./AuthModal";
 import SearchModal from "./SearchModal";
 import { useFavorites } from "../context/FavoritesContext";
 
-const carterasSub = [
-  "Bolsos", "Bandoleras", "Shoulder Bags", "Tote Bags", "Mini Bags",
-  "Riñoneras", "Mochilas", "De Mano", "Sobres", "Bolso de Viaje",
+const productosSub = [
+  "Carteras", "Bolsos", "Bandoleras", "Tote Bags",
+  "Riñoneras", "Mochilas", "Sobres",
 ];
 const accesoriosSub = [
-  "Cinturones", "Fajas", "Yerberas", "Portadocumentos", "Porta Anteojos",
+  "Cuelleras", "Cinturones", "Fajas", "Yerberas", "Porta Documentos", "Porta Anteojos",
 ];
 
 export default function Header() {
@@ -100,7 +100,7 @@ export default function Header() {
             <nav>
               <ul className="flex items-center gap-12 list-none">
 
-                {/* Carteras */}
+                {/* Productos */}
                 <li className="relative group">
                   <button
                     className="flex items-center gap-1 bg-transparent border-none cursor-pointer transition-colors duration-200"
@@ -108,7 +108,7 @@ export default function Header() {
                     onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F7")}
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,245,247,0.6)")}
                   >
-                    Carteras
+                    Productos
                     <svg style={{ width: 7, height: 7, opacity: 0.4 }} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
@@ -118,7 +118,7 @@ export default function Header() {
                     style={{ top: "calc(100% + 2px)", left: "50%", transform: "translateX(-50%)", width: "190px", background: "#181818", border: "1px solid rgba(245,245,247,0.08)", padding: "12px 0 8px" }}
                   >
                     <div style={{ position: "absolute", top: -1, left: "50%", transform: "translateX(-50%)", width: 30, height: 1, background: "#D4AF37" }} />
-                    {carterasSub.map(sub => (
+                    {productosSub.map(sub => (
                       <Link
                         key={sub}
                         href={`/categoria/${encodeURIComponent(sub.toLowerCase().replace(/ /g, "-"))}`}
@@ -164,6 +164,18 @@ export default function Header() {
                       </Link>
                     ))}
                   </div>
+                </li>
+
+                {/* Ellos */}
+                <li>
+                  <Link
+                    href="/categoria/ellos"
+                    style={{ display: "flex", alignItems: "center", color: "rgba(245,245,247,0.6)", fontSize: "10.5px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", transition: "color 0.2s" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F7")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,245,247,0.6)")}
+                  >
+                    Ellos
+                  </Link>
                 </li>
 
                 {/* Gift Card */}
@@ -410,7 +422,7 @@ export default function Header() {
           {/* Links de navegación */}
           <nav className="flex-1 overflow-y-auto px-6 py-2" style={{ overscrollBehavior: "contain" }}>
 
-            {/* Carteras — expandible */}
+            {/* Productos — expandible */}
             <div>
               <button
                 onClick={() => setCartOpen(v => !v)}
@@ -418,7 +430,7 @@ export default function Header() {
                 style={{ padding: "16px 0", borderBottom: "1px solid rgba(245,245,247,0.06)" }}
               >
                 <span style={{ color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", fontWeight: 300 }}>
-                  Carteras
+                  Productos
                 </span>
                 <svg
                   width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -429,7 +441,7 @@ export default function Header() {
               </button>
               {cartOpen && (
                 <div style={{ paddingLeft: "16px" }}>
-                  {carterasSub.map(sub => (
+                  {productosSub.map(sub => (
                     <Link
                       key={sub}
                       href={`/categoria/${encodeURIComponent(sub.toLowerCase().replace(/ /g, "-"))}`}
@@ -475,6 +487,15 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            {/* Ellos */}
+            <Link
+              href="/categoria/ellos"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: "block", padding: "16px 0", color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", borderBottom: "1px solid rgba(245,245,247,0.06)", fontWeight: 300 }}
+            >
+              Ellos
+            </Link>
 
             {/* Gift Card */}
             <Link

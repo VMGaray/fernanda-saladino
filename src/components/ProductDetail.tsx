@@ -224,23 +224,24 @@ export default function ProductDetail({ params }: PageProps) {
               </p>
             </div>
 
-            {/* Descripción */}
-            <div style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "24px" }}>
-              <p className="text-sm leading-relaxed text-brand-light/70" style={{ letterSpacing: "0.05em" }}>
-                {product.description ||
-                  "Producto artesanal confeccionado en cuero argentino de primera calidad. Cada pieza es única y elaborada con técnicas tradicionales de marroquinería."}
-              </p>
-            </div>
+           {/* Descripción Dinámica (Solo se muestra si se escribe en el Admin) */}
+{product.description && (
+  <div style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "24px" }}>
+    <p className="text-sm leading-relaxed text-brand-light/70" style={{ letterSpacing: "0.05em" }}>
+      {product.description}
+    </p>
+  </div>
+)}
 
-            {/* Características fijas */}
-            <div className="space-y-2" style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "20px" }}>
-              {["100% Cuero Argentino", "Confección Artesanal", "Diseño Exclusivo", "Edición Limitada"].map(feat => (
-                <div key={feat} className="flex items-center gap-3">
-                  <span style={{ color: "#D4AF37", fontSize: "10px" }}>—</span>
-                  <p className="text-xs tracking-wider text-brand-silver/70">{feat}</p>
-                </div>
-              ))}
-            </div>
+{/* Características fijas (Se mantienen siempre) */}
+<div className="space-y-2" style={{ borderTop: "1px solid rgba(212,175,55,0.08)", paddingTop: "20px" }}>
+  {["100% Cuero Argentino", "Confección Artesanal", "Diseño Exclusivo", "Edición Limitada"].map(feat => (
+    <div key={feat} className="flex items-center gap-3">
+      <span style={{ color: "#D4AF37", fontSize: "10px" }}>—</span>
+      <p className="text-xs tracking-wider text-brand-silver/70">{feat}</p>
+    </div>
+  ))}
+</div>
 
             {/* Stock */}
             {product.stock !== null && (

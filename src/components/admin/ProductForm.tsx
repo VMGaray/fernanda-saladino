@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -46,6 +46,19 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
   const [stock, setStock] = useState(initialData?.stock?.toString() ?? "");
   const [featured, setFeatured] = useState(initialData?.featured ?? false);
   const [slug, setSlug] = useState(initialData?.slug ?? "");
+
+  // Autogenerar el slug en tiempo real cuando cambia el nombre (solo si no es edición)
+  useEffect(() => {
+    if (!isEdit) {
+      const generatedSlug = name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "") // Limpia acentos
+        .replace(/\s+/g, "-")   // Cambia espacios por guiones
+        .replace(/[^a-z0-9-]/g, ""); // Remueve caracteres especiales
+      setSlug(generatedSlug);
+    }
+  }, [name, isEdit]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const added = Array.from(e.target.files || []);
@@ -98,14 +111,17 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
 
       if (!isEdit && allImageUrls.length === 0) throw new Error("Seleccioná al menos una imagen.");
 
+      // Si por alguna razón el slug quedó vacío, lo calculamos una última vez de respaldo
+      const finalSlug = slug || name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+
       const payload: Record<string, unknown> = {
         name,
         price: parseFloat(price),
         category,
-        description,
+        description: description.trim() || null, // Se guarda limpio en Supabase
         stock: stock ? parseInt(stock) : null,
         featured,
-        slug: slug || name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+        slug: finalSlug,
         ...(allImageUrls.length > 0 && { image_url: allImageUrls[0], images: allImageUrls }),
       };
 
@@ -121,7 +137,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     } catch (err: unknown) {
       console.error("Error al guardar producto:", err);
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
-    } finally {
+    } catch {
       setLoading(false);
       setUploadingImage(false);
     }
@@ -176,8 +192,13 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
           </select>
         </div>
         <div>
-          <label style={labelStyle}>Slug</label>
-          <input style={inputStyle} value={slug} onChange={e => setSlug(e.target.value)} placeholder="auto-generado si vacío" />
+          <label style={labelStyle}>Enlace (Slug)</label>
+          <input 
+            style={{ ...inputStyle, color: "rgba(245,245,247,0.4)", borderBottom: "1px solid rgba(212,175,55,0.1)", cursor: "not-allowed" }} 
+            value={slug} 
+            disabled 
+            placeholder="Se genera automáticamente" 
+          />
         </div>
         <div style={{ gridColumn: "1 / -1" }}>
           <label style={labelStyle}>Descripción</label>
@@ -185,6 +206,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
             style={{ ...inputStyle, resize: "none", height: "72px" }}
             value={description}
             onChange={e => setDescription(e.target.value)}
+            placeholder="Opcional. Escribí los detalles específicos de la pieza..."
           />
         </div>
       </div>
@@ -232,7 +254,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
           style={{ display: "none" }}
         />
 
-        {/* Grilla unificada: existentes + nuevas */}
+        {/* Grilla unificada */}
         {(existingUrls.length > 0 || newPreviews.length > 0) && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginTop: "8px" }}>
             {existingUrls.map((src, i) => (

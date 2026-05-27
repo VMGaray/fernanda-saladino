@@ -2,6 +2,7 @@
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 import ProductForm from "./ProductForm";
+import CarouselManager from "./CarouselManager"; // <-- Importamos tu nuevo gestor
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -37,7 +38,8 @@ interface Order {
   user_id?: string;
 }
 
-type Tab = "productos" | "pedidos" | "estadisticas";
+// Actualizamos el tipo para incluir la nueva pestaña
+type Tab = "productos" | "pedidos" | "estadisticas" | "carrusel";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -96,7 +98,8 @@ export default function AdminPanel() {
       {/* Tabs */}
       <div style={{ overflowX: "auto", marginBottom: "40px", borderBottom: "1px solid rgba(245,245,247,0.08)" }}>
         <div style={{ display: "flex", minWidth: "max-content" }}>
-          {(["productos", "pedidos", "estadisticas"] as Tab[]).map(t => (
+          {/* Mapeamos el nuevo arreglo de pestañas */}
+          {(["productos", "pedidos", "estadisticas", "carrusel"] as Tab[]).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -117,15 +120,17 @@ export default function AdminPanel() {
                 whiteSpace: "nowrap",
               }}
             >
-              {t === "estadisticas" ? "Estadísticas" : t.charAt(0).toUpperCase() + t.slice(1)}
+              {t === "estadisticas" ? "Estadísticas" : t === "carrusel" ? "Portada Home" : t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
           ))}
         </div>
       </div>
 
-      {tab === "productos"   && <TabProductos />}
-      {tab === "pedidos"     && <TabPedidos />}
+      {tab === "productos"    && <TabProductos />}
+      {tab === "pedidos"      && <TabPedidos />}
       {tab === "estadisticas" && <TabEstadisticas />}
+      {/* Añadimos el renderizado del nuevo componente */}
+      {tab === "carrusel"     && <CarouselManager />}
     </div>
   );
 }
@@ -281,6 +286,8 @@ function TabProductos() {
     </div>
   );
 }
+
+// ── TabPedidos y TabEstadisticas quedan exactamente igual abajo ──────────────────
 
 // ══════════════════════════════════════════════════════════════════════════
 // TAB PEDIDOS

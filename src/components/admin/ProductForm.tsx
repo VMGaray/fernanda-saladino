@@ -146,7 +146,7 @@ export default function ProductForm({ initialData, onSuccess, onCancel }: Produc
     } catch (err: unknown) {
       console.error("Error al guardar producto:", err);
       alert("Error: " + (err instanceof Error ? err.message : String(err)));
-    } catch {
+    } finally {
       setLoading(false);
       setUploadingImage(false);
     }

@@ -54,22 +54,35 @@ export default function HeroCarousel() {
   return (
     <section className="relative h-[60vh] w-full bg-brand-dark overflow-hidden shadow-2xl">
       {/* Slides */}
-      {activeSlides.map((img, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${
-            index === current ? "opacity-50" : "opacity-0"
-          }`}
-        >
-          {img !== "transparent" && (
-            <img
-              src={img}
-              alt={`Slide ${index}`}
-              className="w-full h-full object-cover"
-            />
-          )}
-        </div>
-      ))}
+{activeSlides.map((url, index) => {
+  const isVideo = url.toLowerCase().endsWith(".mp4"); // Detecta si es video
+
+  return (
+    <div
+      key={index}
+      className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${
+        index === current ? "opacity-50" : "opacity-0"
+      }`}
+    >
+      {isVideo ? (
+        <video
+          src={url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <img
+          src={url}
+          alt={`Slide ${index}`}
+          className="w-full h-full object-cover"
+        />
+      )}
+    </div>
+  );
+})}
 
       {/* Contenido Fijo (Overlay) */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-6">

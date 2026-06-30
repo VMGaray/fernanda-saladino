@@ -116,13 +116,13 @@ export default function CarouselManager() {
       <label style={labelStyle}>Imágenes del Carrusel Principal</label>
       
       <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        onChange={handleFileUpload}
-        style={{ display: "none" }}
-      />
+  ref={fileInputRef}
+  type="file"
+  accept="image/*,video/mp4" // <-- Agregamos video/mp4 aquí
+  multiple
+  onChange={handleFileUpload}
+  style={{ display: "none" }}
+/>
 
       {loading ? (
         <div style={{ padding: "20px 0", color: "rgba(245,245,247,0.4)", fontSize: "11px" }}>

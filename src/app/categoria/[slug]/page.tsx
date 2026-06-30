@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import CategoryView from "../../../components/CategoryView";
 
+export const dynamic = 'force-dynamic';
+
 interface GenerateMetadataProps {
   params: Promise<{ slug: string }>;
 }

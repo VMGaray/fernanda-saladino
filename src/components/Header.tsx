@@ -178,6 +178,18 @@ export default function Header() {
                   </Link>
                 </li>
 
+                {/* Varios */}
+                <li>
+                  <Link
+                    href="/categoria/varios"
+                    style={{ display: "flex", alignItems: "center", color: "rgba(245,245,247,0.6)", fontSize: "10.5px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", transition: "color 0.2s" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F7")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,245,247,0.6)")}
+                  >
+                    Varios
+                  </Link>
+                </li>
+
                 {/* Gift Card */}
                 <li>
                   <Link
@@ -495,6 +507,15 @@ export default function Header() {
               style={{ display: "block", padding: "16px 0", color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", borderBottom: "1px solid rgba(245,245,247,0.06)", fontWeight: 300 }}
             >
               Ellos
+            </Link>
+
+            {/* Varios */}
+            <Link
+              href="/categoria/varios"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: "block", padding: "16px 0", color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", borderBottom: "1px solid rgba(245,245,247,0.06)", fontWeight: 300 }}
+            >
+              Varios
             </Link>
 
             {/* Gift Card */}

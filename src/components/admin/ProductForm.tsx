@@ -33,7 +33,7 @@ const CATEGORY_GROUPS = [
   },
   {
     group: "Otros",
-    items: ["Ellos"],
+    items: ["Ellos", "Varios"],
   },
 ];
 

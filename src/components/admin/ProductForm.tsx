@@ -25,7 +25,7 @@ interface ProductFormProps {
 const CATEGORY_GROUPS = [
   {
     group: "Productos",
-    items: ["Carteras", "Bolsos", "Bandoleras", "Tote Bags", "Riñoneras", "Mochilas", "Sobres"],
+    items: ["Carteras", "Bolsos", "Bandoleras", "Tote Bags", "Riñoneras", "Mochilas", "Sobres", "Varios"],
   },
   {
     group: "Accesorios",
@@ -33,7 +33,7 @@ const CATEGORY_GROUPS = [
   },
   {
     group: "Otros",
-    items: ["Ellos", "Varios"],
+    items: ["Ellos"],
   },
 ];
 

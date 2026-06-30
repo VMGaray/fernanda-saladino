@@ -10,7 +10,7 @@ import { useFavorites } from "../context/FavoritesContext";
 
 const productosSub = [
   "Carteras", "Bolsos", "Bandoleras", "Tote Bags",
-  "Riñoneras", "Mochilas", "Sobres",
+  "Riñoneras", "Mochilas", "Sobres", "Varios",
 ];
 const accesoriosSub = [
   "Cuelleras", "Cinturones", "Fajas", "Yerberas", "Porta Documentos", "Porta Anteojos",
@@ -175,18 +175,6 @@ export default function Header() {
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,245,247,0.6)")}
                   >
                     Ellos
-                  </Link>
-                </li>
-
-                {/* Varios */}
-                <li>
-                  <Link
-                    href="/categoria/varios"
-                    style={{ display: "flex", alignItems: "center", color: "rgba(245,245,247,0.6)", fontSize: "10.5px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", transition: "color 0.2s" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F7")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(245,245,247,0.6)")}
-                  >
-                    Varios
                   </Link>
                 </li>
 
@@ -507,15 +495,6 @@ export default function Header() {
               style={{ display: "block", padding: "16px 0", color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", borderBottom: "1px solid rgba(245,245,247,0.06)", fontWeight: 300 }}
             >
               Ellos
-            </Link>
-
-            {/* Varios */}
-            <Link
-              href="/categoria/varios"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ display: "block", padding: "16px 0", color: "rgba(245,245,247,0.8)", fontSize: "11px", letterSpacing: "0.28em", textTransform: "uppercase", textDecoration: "none", borderBottom: "1px solid rgba(245,245,247,0.06)", fontWeight: 300 }}
-            >
-              Varios
             </Link>
 
             {/* Gift Card */}

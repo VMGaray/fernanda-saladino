@@ -1,13 +1,11 @@
 export const dynamic = 'force-dynamic';
 
-import Header from "../components/Header";
 import HeroCarousel from "../components/HeroCarousel";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-black text-brand-light">
-      <Header />
 
       {/* Sección 1: Portada con Carrusel Dinámico */}
       <HeroCarousel />

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
-import Header from "@/components/Header";
-import HeroCarousel from "@/components/HeroCarousel";
+import Header from "../components/Header";
+import HeroCarousel from "../components/HeroCarousel";
 import Link from "next/link";
 
 export default function Home() {
